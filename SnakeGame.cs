@@ -43,23 +43,6 @@ public partial class SnakeGame : Node2D
 			QueueRedraw();
 		}
 	}
-
-	public void _draw()
-	{
-		DrawRect(new Rect2(0, 0, Width * Scale, Height * Scale), Colors.Black, true);
-
-		// Draw borders
-		DrawBorder();
-
-		// Draw snake body
-		foreach (var segment in _snakeBody)
-		{
-			DrawRect(new Rect2(segment[0] * Scale, segment[1] * Scale, Scale, Scale), Colors.Green, true);
-		}
-
-		// Draw berry
-		DrawRect(new Rect2(_berryPosition[0] * Scale, _berryPosition[1] * Scale, Scale, Scale), Colors.Red, true);
-	}
 	
 	public override void _Draw()
 	{
