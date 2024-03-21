@@ -13,7 +13,7 @@ public partial class SnakeGame : Node2D
 	private Vector2 _snakeDirection;
 	private double _elapsedTime;
 	private bool _isGameOver;
-	private const int Scale = 16; // Adjust the scale factor as needed
+	private const int Scale = 16;
 
 	public override void _Ready()
 	{
