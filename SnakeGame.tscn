@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://mkkwv35mgvih"]
+
+[ext_resource type="Script" path="res://SnakeGame.cs" id="1_we00g"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_we00g")

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 public partial class SnakeGame : Node2D
 {
 	private const int Width = 32;
@@ -13,7 +14,14 @@ public partial class SnakeGame : Node2D
 	private Vector2 _snakeDirection;
 	private double _elapsedTime;
 	private bool _isGameOver;
-	private const int Scale = 16;
+	private const int Scale = 16; // Adjust the scale factor as needed
+	private Texture2D imageTexture;
+	private Texture2D imageBerry = GD.Load<Texture2D>("res://Graphics/berry.png");
+	private Texture2D imageWall = GD.Load<Texture2D>("res://Graphics/wall.png");
+	private Texture2D imageField = GD.Load<Texture2D>("res://Graphics/field.png");
+	private Texture2D imageBody = GD.Load<Texture2D>("res://Graphics/snake_body.png");
+	private Texture2D imageHead = GD.Load<Texture2D>("res://Graphics/snake_head.png");
+	private Texture2D imageGO = GD.Load<Texture2D>("res://Graphics/go.png");
 
 	public override void _Ready()
 	{
@@ -27,14 +35,7 @@ public partial class SnakeGame : Node2D
 
 	public override void _Process(double delta)
 	{
-		if (_isGameOver)
-		{
-			GD.Print("Game over");
-			return;
-		}
-
 		_elapsedTime += delta;
-		GD.Print("Adjusted Delta: " + delta);
 		if (_elapsedTime > 0.5)
 		{
 			_elapsedTime = 0;
@@ -46,32 +47,37 @@ public partial class SnakeGame : Node2D
 	
 	public override void _Draw()
 	{
-		// Clear screen
-		DrawRect(new Rect2(0, 0, Width * Scale, Height * Scale), Colors.Black, true);
-
+		Rect2 destinationRect = new Rect2(0,0,0,0);
 		// Draw borders
 		DrawBorder();
-
 		// Draw snake body
 		foreach (var segment in _snakeBody)
 		{
-			DrawRect(new Rect2(segment[0] * Scale, segment[1] * Scale, Scale, Scale), Colors.Green, true);
+			destinationRect = new Rect2(segment[0] * Scale, segment[1] * Scale, Scale, Scale);
+			DrawTextureRect(imageBody, destinationRect, false);
 		}
-
+		destinationRect = new Rect2(_snakeBody[0].X * Scale, _snakeBody[0].Y * Scale, Scale, Scale);
+		DrawTextureRect(imageHead, destinationRect, false);
 		// Draw berry
-		DrawRect(new Rect2(_berryPosition[0] * Scale, _berryPosition[1] * Scale, Scale, Scale), Colors.Red, true);
+		destinationRect = new Rect2(_berryPosition[0] * Scale, _berryPosition[1] * Scale, Scale, Scale);
+		DrawTextureRect(imageBerry, destinationRect, false);
+		if (_isGameOver)
+		{
+			destinationRect = new Rect2(0, 0, Width * Scale, Height * Scale);
+			DrawTextureRect(imageGO, destinationRect, false);
+			Engine.TimeScale = 0;
+		}
 	}
 
 	private void DrawBorder()
 	{
-		// Top border
-		DrawRect(new Rect2(0, 0, Width * Scale, Scale), Colors.White, true);
-		// Bottom border
-		DrawRect(new Rect2(0, (Height - 1) * Scale, Width * Scale, Scale), Colors.White, true);
-		// Left border
-		DrawRect(new Rect2(0, 0, Scale, Height * Scale), Colors.White, true);
-		// Right border
-		DrawRect(new Rect2((Width - 1) * Scale, 0, Scale, Height * Scale), Colors.White, true);
+		//Draw Wall
+		Rect2 destinationRect = new Rect2(0, 0, 0, 0);
+		destinationRect = new Rect2(0, 0, Width * Scale, Height * Scale);
+		DrawTextureRect(imageWall, destinationRect, true);
+		//Draw Field
+		destinationRect = new Rect2(0 + Scale, 0 + Scale, Width * Scale - 2 * Scale, Height * Scale - 2 * Scale);
+		DrawTextureRect(imageField, destinationRect, true);
 	}
 
 	
@@ -99,7 +105,7 @@ public partial class SnakeGame : Node2D
 	private void CheckCollision()
 	{
 		var head = _snakeBody.First();
-		if (head[0] < 0 || head[0] >= Width || head[1] < 0 || head[1] >= Height)
+		if (head[0] < 1 || head[0] >= Width-1 || head[1] < 1 || head[1] >= Height-1)
 		{
 			_isGameOver = true;
 			return;
